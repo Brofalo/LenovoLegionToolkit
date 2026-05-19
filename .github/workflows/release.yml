@@ -25,14 +25,24 @@ permissions:
   contents: write
   id-token: write
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build-and-release:
-    runs-on: windows-2022
+    # Node-One self-hosted runner (per-repo `node-one-llt`, registered
+    # 2026-05-18). Same toolchain context as build.yml.
+    runs-on: [self-hosted, Windows, X64, pono-build]
+    timeout-minutes: 60
 
     steps:
     - name: Checkout
       uses: actions/checkout@v5
-      
+      with:
+        persist-credentials: false
+
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v5
       with:
